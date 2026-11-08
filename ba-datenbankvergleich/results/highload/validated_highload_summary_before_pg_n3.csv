@@ -1,0 +1,9 @@
+﻿system,dataset,users,duration_min,n,requests_per_second,median_ms,p95_ms,p99_ms,fail_rate_percent,measurement_scope,client_mode,source
+postgres,medium,500,10,1,650.7595,190,1600,3700,0.0000,complete_run,direct_connection_per_user,postgres_medium_u0500_10m_r1
+postgres,medium,1000,10,1,379.2536,990,8400,17000,0.0000,complete_run,direct_connection_per_user,postgres_medium_u1000_10m_r1
+postgres,medium,2500,10,1,88.4178,7000,36000,97000,0.0000,complete_run,direct_connection_per_user,postgres_medium_u2500_10m_r1
+postgres,medium,5000,10,1,96.3904,6500,37000,94000,0.0000,complete_run,direct_connection_per_user,postgres_medium_u5000_10m_r1
+mongo,medium,500,10,3,559.4600,390,1500,2766.67,0.0002,complete_run,shared_mongo_client,shared_r1_r2_r3
+mongo,medium,1000,10,3,513.1100,1100,4600,7700,0.0013,complete_run,shared_mongo_client,shared_r2_r3_r4
+mongo,medium,2500,10,1,428.6600,3800,11000,18000,0.0071,stable_user_phase,shared_mongo_client,mongo_medium_u2500_10m_shared_r1
+mongo,medium,5000,10,1,210.6400,13000,47000,71000,0.0200,stable_user_phase,shared_mongo_client,mongo_medium_u5000_10m_shared_r1

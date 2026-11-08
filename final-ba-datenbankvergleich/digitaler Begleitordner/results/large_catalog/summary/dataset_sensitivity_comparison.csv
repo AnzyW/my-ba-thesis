@@ -1,0 +1,3 @@
+﻿"system","users","medium_n","large_catalog_n","medium_rps","large_catalog_rps","medium_median_ms","large_catalog_median_ms","medium_p95_ms","large_catalog_p95_ms","medium_p99_ms","large_catalog_p99_ms","medium_fail_percent","large_catalog_fail_percent"
+"postgres","500","3","3","632.3453","602.965210751617","220","246.666666666667","1466.67","1600","3700","3800","0","0"
+"mongo","500","3","3","559.46","293.260922062668","390","930","1500","3933.33333333333","2766.67","6533.33333333333","0.0002","0"

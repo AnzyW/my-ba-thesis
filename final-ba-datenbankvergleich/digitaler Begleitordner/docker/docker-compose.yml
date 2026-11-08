@@ -1,0 +1,94 @@
+services:
+  postgres:
+    image: postgres:18.4-bookworm
+    container_name: ba-postgres
+    profiles:
+      - postgres
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: ba_user
+      POSTGRES_PASSWORD: ba_password
+    command:
+      [
+        "postgres",
+        "-c", "max_connections=6000",
+        "-c", "shared_buffers=1GB",
+        "-c", "work_mem=16MB",
+        "-c", "synchronous_commit=on"
+      ]
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./postgres/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+    cpus: 4.0
+    mem_limit: 6g
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ba_user -d ecommerce"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ba-net
+
+  mongo:
+    image: mongodb/mongodb-community-server:8.0.23-ubi8-slim
+    container_name: ba-mongo
+    profiles:
+      - mongo
+    command:
+      [
+        "mongod",
+        "--replSet", "rs0",
+        "--wiredTigerCacheSizeGB", "2"
+      ]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+      - ./mongodb/init_mongo.js:/scripts/init_mongo.js:ro
+    cpus: 4.0
+    mem_limit: 6g
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval \"db.adminCommand('ping').ok\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ba-net
+
+  mongo-init-replica:
+    image: mongodb/mongodb-community-server:8.0.23-ubi8-slim
+    container_name: ba-mongo-init-replica
+    profiles:
+      - mongo
+    depends_on:
+      mongo:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "mongosh --host mongo:27017 --quiet --eval '
+      try {
+        rs.status();
+        print(\"Replica set already initialized.\");
+      } catch (e) {
+        rs.initiate({
+          _id: \"rs0\",
+          members: [
+            { _id: 0, host: \"mongo:27017\" }
+          ]
+        });
+        print(\"Replica set initialized.\");
+      }
+      '"
+    restart: "no"
+    networks:
+      - ba-net
+
+volumes:
+  pgdata:
+  mongodata:
+
+networks:
+  ba-net:
+    driver: bridge
